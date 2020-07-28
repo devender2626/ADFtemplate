@@ -1,0 +1,17 @@
+{
+	"name": "ls_sa_solicitations",
+	"properties": {
+		"annotations": [],
+		"type": "AzureBlobStorage",
+		"typeProperties": {
+			"connectionString": {
+				"type": "AzureKeyVaultSecret",
+				"store": {
+					"referenceName": "ls_kv_solicitations",
+					"type": "LinkedServiceReference"
+				},
+				"secretName": "saSolicitations"
+			}
+		}
+	}
+}

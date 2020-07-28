@@ -1,0 +1,139 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "SolicitEventDF"
+		},
+		"CosmosDbSqlApiCollection_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'CosmosDbSqlApiCollection'"
+		},
+		"LinkCosmosDB_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'LinkCosmosDB'"
+		},
+		"LinkSolicit_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'LinkSolicit'"
+		},
+		"Source_Blob_Link_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'Source_Blob_Link'"
+		},
+		"ls_Blob_json_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'ls_Blob_json'"
+		},
+		"tr_IngestSolicitation_properties_typeProperties_scope": {
+			"type": "string",
+			"defaultValue": "/subscriptions/19d8d1ac-3f00-4c5a-a1b6-6f65a774c7c2/resourceGroups/RGElitaPOC/providers/Microsoft.Storage/storageAccounts/soliciteventsa"
+		},
+		"tr_sa_fileingress_dev_properties_Pl_IngestSolicitationFile_parameters_RejectedFolder": {
+			"type": "string",
+			"defaultValue": "Reject"
+		},
+		"tr_sa_fileingress_dev_properties_Pl_IngestSolicitationFile_parameters_ErrorFolder": {
+			"type": "string",
+			"defaultValue": "Error"
+		},
+		"tr_sa_fileingress_dev_properties_typeProperties_scope": {
+			"type": "string",
+			"defaultValue": "/subscriptions/19d8d1ac-3f00-4c5a-a1b6-6f65a774c7c2/resourceGroups/RGElitaPOC/providers/Microsoft.Storage/storageAccounts/soliciteventsa"
+		},
+		"trigger1_properties_typeProperties_scope": {
+			"type": "string",
+			"defaultValue": "/subscriptions/19d8d1ac-3f00-4c5a-a1b6-6f65a774c7c2/resourceGroups/RGElitaPOC/providers/Microsoft.Storage/storageAccounts/soliciteventsa"
+		},
+		"trigger2_properties_typeProperties_scope": {
+			"type": "string",
+			"defaultValue": "/subscriptions/19d8d1ac-3f00-4c5a-a1b6-6f65a774c7c2/resourceGroups/RGElitaPOC/providers/Microsoft.Storage/storageAccounts/soliciteventsa"
+		},
+		"containerUri": {
+			"type": "string",
+			"metadata": "URI to storage account containing linked ARM templates"
+		},
+		"containerSasToken": {
+			"type": "string",
+			"metadata": "Sas token to storage account containing linked ARM templates"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "ArmTemplate_0",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_0.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					},
+					"CosmosDbSqlApiCollection_connectionString": {
+						"value": "[parameters('CosmosDbSqlApiCollection_connectionString')]"
+					},
+					"LinkCosmosDB_connectionString": {
+						"value": "[parameters('LinkCosmosDB_connectionString')]"
+					},
+					"LinkSolicit_connectionString": {
+						"value": "[parameters('LinkSolicit_connectionString')]"
+					},
+					"Source_Blob_Link_connectionString": {
+						"value": "[parameters('Source_Blob_Link_connectionString')]"
+					},
+					"ls_Blob_json_connectionString": {
+						"value": "[parameters('ls_Blob_json_connectionString')]"
+					},
+					"tr_IngestSolicitation_properties_typeProperties_scope": {
+						"value": "[parameters('tr_IngestSolicitation_properties_typeProperties_scope')]"
+					},
+					"trigger1_properties_typeProperties_scope": {
+						"value": "[parameters('trigger1_properties_typeProperties_scope')]"
+					},
+					"trigger2_properties_typeProperties_scope": {
+						"value": "[parameters('trigger2_properties_typeProperties_scope')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "ArmTemplate_1",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_1.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					},
+					"tr_sa_fileingress_dev_properties_Pl_IngestSolicitationFile_parameters_RejectedFolder": {
+						"value": "[parameters('tr_sa_fileingress_dev_properties_Pl_IngestSolicitationFile_parameters_RejectedFolder')]"
+					},
+					"tr_sa_fileingress_dev_properties_Pl_IngestSolicitationFile_parameters_ErrorFolder": {
+						"value": "[parameters('tr_sa_fileingress_dev_properties_Pl_IngestSolicitationFile_parameters_ErrorFolder')]"
+					},
+					"tr_sa_fileingress_dev_properties_typeProperties_scope": {
+						"value": "[parameters('tr_sa_fileingress_dev_properties_typeProperties_scope')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'ArmTemplate_0')]"
+			]
+		}
+	]
+}

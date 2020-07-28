@@ -1,0 +1,17 @@
+{
+	"name": "ls_at_solicitfiles",
+	"properties": {
+		"annotations": [],
+		"type": "AzureTableStorage",
+		"typeProperties": {
+			"connectionString": {
+				"type": "AzureKeyVaultSecret",
+				"store": {
+					"referenceName": "ls_kv_solicitations",
+					"type": "LinkedServiceReference"
+				},
+				"secretName": "saSolicitations"
+			}
+		}
+	}
+}

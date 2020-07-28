@@ -1,0 +1,73 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "SolicitEventDF"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/df_SolicitationDataProcess')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "InProcess_Blob_DF_Parm",
+								"type": "DatasetReference"
+							},
+							"name": "GetFileData"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "Reject_Blob",
+								"type": "DatasetReference"
+							},
+							"name": "sink1"
+						},
+						{
+							"dataset": {
+								"referenceName": "ds_Blob_Json",
+								"type": "DatasetReference"
+							},
+							"name": "processedToJson"
+						}
+					],
+					"transformations": [
+						{
+							"name": "Transform"
+						},
+						{
+							"name": "Valid"
+						},
+						{
+							"name": "IsNotValid"
+						},
+						{
+							"name": "Select1"
+						},
+						{
+							"name": "Aggregate1"
+						},
+						{
+							"name": "Join1"
+						}
+					],
+					"script": "parameters{\n\tfilename as string,\n\tYY as string (\"2020\"),\n\tMM as string (\"06\"),\n\tDD as string (\"09\"),\n\tcompanycode as string (\"cpmp\"),\n\tdealercode as string (\"DD\"),\n\tOperation as string (\"Enrollment\")\n}\nsource(output(\n\t\tInitialSalesOrderNumber as string,\n\t\tCustomerID as long,\n\t\tApplyDate as date 'yyyy/MM/dd',\n\t\tOpenDate as date 'yyyy/MM/dd',\n\t\tCloseDate as date 'yyyy/MM/dd',\n\t\tLastName as string,\n\t\tFirstName as string,\n\t\tLastNameKana as string,\n\t\tFirstNameKana as string,\n\t\tBirthday as date 'yyyy/MM/dd',\n\t\tPostalCode as integer,\n\t\tAddress as string,\n\t\tTelephoneNumber as integer,\n\t\t{E-mail} as string,\n\t\tSIMPhoneNumber as string,\n\t\tShopID as string,\n\t\tSalesChannel as string,\n\t\tShopName as string,\n\t\tShopZipCode as string,\n\t\tShopAddress as string,\n\t\tShopTelephoneNumber as string,\n\t\tDisconnectionReason as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false) ~> GetFileData\nJoin1 derive(customer = @(id=CustomerID,\n\t\tfirstName=FirstName,\n\t\tlastName=LastName,\n\t\tfirstNameKana=FirstNameKana,\n\t\tlastNameKana=LastNameKana,\n\t\tdateOfBirth=Birthday,\n\t\tworkPhoneNumber=ShopTelephoneNumber,\n\t\thomePhoneNumber=TelephoneNumber,\n\t\tcellPhoneNumber=\"\",\n\t\temailAddress={E-mail},\n\t\tApplyDate=ApplyDate,\n\t\tAddress=@(address1=Address,\n\t\taddress2=\"\",\n\t\taddress3=\"\",\n\t\tregionCode=\"\",\n\t\tcity=\"\",\n\t\tzipCode=PostalCode,\n\t\tcountryCode=\"\")),\n\t\tstatus = \"Active\",\n\t\tlocatorProperties = @(dateOfBirth=Birthday,\n\t\tcustomerId=CustomerID,\n\t\tsalesOrderNumber=Select1@InitialSalesOrderNumber),\n\t\towner = @(organization=@(code=\"\",\n\t\tname=\"\",\n\t\taddress=\"\",\n\t\tworkPhoneNumber=\"\")),\n\t\torigin = @(organization=\"\",\n\t\tchannelCode=\"\",\n\t\tsalesOrderNumber=Select1@InitialSalesOrderNumber),\n\t\tIsValidInsert = iif( SalesNumberCount > 1||\r\n     isNull(Select1@InitialSalesOrderNumber)||\r\n     isNull(CustomerID)||     \r\n     isNull(LastName)||\r\n     isNull(FirstName)||\r\n     isNull(LastNameKana) ||\r\n     isNull(FirstNameKana)||\r\n     isNull(PostalCode)||\r\n     isNull(Address)||\r\n     isNull(TelephoneNumber)||\r\n     isNull({E-mail})||\r\n     isNull(SIMPhoneNumber)     \r\n, 0, 1),\n\t\tIsValidUpdate = iif( SalesNumberCount > 1||\r\n     isNull(Select1@InitialSalesOrderNumber)||\r\n     isNull(CustomerID)||\r\n     isNull(ApplyDate)||\r\n     isNull(OpenDate)||\r\n     isNull(LastName)||\r\n     isNull(FirstName)||\r\n     isNull(LastNameKana) ||\r\n      isNull(FirstNameKana)||\r\n     isNull(Birthday)||\r\n     isNull(PostalCode)||\r\n     isNull(Address)||\r\n     isNull(TelephoneNumber)||\r\n     isNull({E-mail})||\r\n     isNull(SIMPhoneNumber)     \r\n, 0, 1),\n\t\tIsValidDelete = iif( SalesNumberCount > 1||\r\n     isNull(Select1@InitialSalesOrderNumber)||\r\n     isNull(CustomerID)||\r\n     isNull(ApplyDate)||\r\n     isNull(OpenDate)||\r\n     isNull(LastName)||\r\n     isNull(FirstName)||\r\n     isNull(LastNameKana) ||\r\n      isNull(FirstNameKana)||\r\n     isNull(Birthday)||\r\n     isNull(PostalCode)||\r\n     isNull(Address)||\r\n     isNull(TelephoneNumber)||\r\n     isNull({E-mail})||\r\n     isNull(SIMPhoneNumber)     \r\n, 0, 1),\n\t\tError = iif((upper($Operation)==\"ENROLLMENT\" || upper($Operation)==\"CANCEL\"||upper($Operation)==\"UPDATE\") && SalesNumberCount> 1 ,\"Duplicate record!\", \r\niif((upper($Operation)==\"ENROLLMENT\" || upper($Operation)==\"CANCEL\"||upper($Operation)==\"UPDATE\") && (isNull(Aggregate1@InitialSalesOrderNumber)),\"Invalid initial sales order number\",\r\niif((upper($Operation)==\"ENROLLMENT\" || upper($Operation)==\"CANCEL\"||upper($Operation)==\"UPDATE\" ) && isNull(CustomerID),\"Invalid customerid\",\r\niif((upper($Operation)==\"ENROLLMENT\") && isNull(ApplyDate) ,\"Invalid applydate record!\",\r\niif((upper($Operation)==\"ENROLLMENT\") && isNull(OpenDate) ,\"Invalid open record!\",\r\niif((upper($Operation)==\"CANCEL\" ) && isNull(CloseDate) ,\"Invalid close date\", \r\niif((upper($Operation)==\"ENROLLMENT\" || upper($Operation)==\"UPDATE\" ) && (isNull(FirstName) || length(FirstName) >60) ,\"Invalid firstname\", \r\niif((upper($Operation)==\"ENROLLMENT\" || upper($Operation)==\"UPDATE\" ) && (isNull(LastName)|| length(LastName) >30),\"Invalid lastname\",\r\niif((upper($Operation)==\"ENROLLMENT\" || upper($Operation)==\"UPDATE\" ) && (isNull(FirstNameKana) || length(FirstNameKana) >60),\"Invalid firstnameKana\",\r\niif((upper($Operation)==\"ENROLLMENT\" || upper($Operation)==\"UPDATE\" ) && (isNull(LastNameKana) || length(LastNameKana) >60),\"Invalid firstnameKana\", \r\niif((upper($Operation)==\"ENROLLMENT\" ) && isNull(Birthday) ,\"Invalid Birthdate\", \r\niif((upper($Operation)==\"ENROLLMENT\" || upper($Operation)==\"UPDATE\" ) && isNull(PostalCode),\"Invalid postal code\",\r\niif((upper($Operation)==\"ENROLLMENT\" || upper($Operation)==\"UPDATE\" ) && isNull(Address),\"Invalid address\",\r\niif((upper($Operation)==\"ENROLLMENT\" || upper($Operation)==\"UPDATE\" ) && isNull(TelephoneNumber),\"Invalid telephone number\",\r\niif((upper($Operation)==\"ENROLLMENT\" || upper($Operation)==\"UPDATE\" ) && isNull({E-mail}),\"Invalid email address\",\r\niif((upper($Operation)==\"ENROLLMENT\" || upper($Operation)==\"CANCEL\"||upper($Operation)==\"UPDATE\" ) && isNull(SIMPhoneNumber),\"Invalid SIM phone number\",\"\"))))))) ))))))))),\n\t\tErrorcode = iif((upper($Operation)==\"ENROLLMENT\" || upper($Operation)==\"CANCEL\"||upper($Operation)==\"UPDATE\") && SalesNumberCount> 1 ,\"000\", \r\niif((upper($Operation)==\"ENROLLMENT\" || upper($Operation)==\"CANCEL\"||upper($Operation)==\"UPDATE\") && (isNull(Aggregate1@InitialSalesOrderNumber)),\"001\",\r\niif((upper($Operation)==\"ENROLLMENT\" || upper($Operation)==\"CANCEL\"||upper($Operation)==\"UPDATE\" ) && isNull(CustomerID),\"002\",\r\niif((upper($Operation)==\"ENROLLMENT\") && isNull(ApplyDate) ,\"003\",\r\niif((upper($Operation)==\"ENROLLMENT\") && isNull(OpenDate) ,\"004\",\r\niif((upper($Operation)==\"CANCEL\") && isNull(CloseDate) ,\"005\",\r\niif((upper($Operation)==\"ENROLLMENT\" || upper($Operation)==\"UPDATE\" ) && (isNull(FirstName) || length(FirstName) >60) ,\"006\", \r\niif((upper($Operation)==\"ENROLLMENT\" || upper($Operation)==\"UPDATE\" ) && (isNull(LastName)|| length(LastName) >30),\"007\",\r\niif((upper($Operation)==\"ENROLLMENT\" || upper($Operation)==\"UPDATE\" ) && (isNull(FirstNameKana) || length(FirstName) >60),\"008\",\r\niif((upper($Operation)==\"ENROLLMENT\" || upper($Operation)==\"UPDATE\" ) && (isNull(LastNameKana) || length(LastNameKana) >60),\"009\", \r\niif((upper($Operation)==\"ENROLLMENT\" || upper($Operation)==\"UPDATE\" ) && isNull(PostalCode),\"010\",\r\niif((upper($Operation)==\"ENROLLMENT\" || upper($Operation)==\"UPDATE\" ) && isNull(Address),\"011\",\r\niif((upper($Operation)==\"ENROLLMENT\" || upper($Operation)==\"UPDATE\" ) && isNull(TelephoneNumber),\"012\",\r\niif((upper($Operation)==\"ENROLLMENT\" || upper($Operation)==\"UPDATE\" ) && isNull({E-mail}),\"013\",\r\niif((upper($Operation)==\"ENROLLMENT\" || upper($Operation)==\"CANCEL\"||upper($Operation)==\"UPDATE\" ) && isNull(SIMPhoneNumber),\"014\",\"\"))))))) ))))))))) ~> Transform\nTransform filter((IsValidInsert== 1 && upper($Operation) ==\"ENROLLMENT\") || (IsValidUpdate == 1 && $Operation ==\"UPDATE\") || (IsValidDelete== 1 && upper($Operation) ==\"CANCEL\")) ~> Valid\nTransform filter((IsValidInsert== 0 && upper($Operation) ==\"ENROLLMENT\") || (IsValidUpdate == 0 && $Operation ==\"UPDATE\") || (IsValidDelete== 0 && upper($Operation) ==\"CANCEL\")) ~> IsNotValid\nGetFileData select(mapColumn(\n\t\tInitialSalesOrderNumber,\n\t\tCustomerID,\n\t\tApplyDate,\n\t\tOpenDate,\n\t\tCloseDate,\n\t\tLastName,\n\t\tFirstName,\n\t\tLastNameKana,\n\t\tFirstNameKana,\n\t\tBirthday,\n\t\tPostalCode,\n\t\tAddress,\n\t\tTelephoneNumber,\n\t\t{E-mail},\n\t\tSIMPhoneNumber,\n\t\tShopID,\n\t\tSalesChannel,\n\t\tShopName,\n\t\tShopZipCode,\n\t\tShopAddress,\n\t\tShopTelephoneNumber,\n\t\tDisconnectionReason\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Select1\nGetFileData aggregate(groupBy(InitialSalesOrderNumber),\n\tSalesNumberCount = count(1)) ~> Aggregate1\nAggregate1, Select1 join(Aggregate1@InitialSalesOrderNumber == Select1@InitialSalesOrderNumber,\n\tjoinType:'inner',\n\tbroadcast: 'auto')~> Join1\nIsNotValid sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:[(concat(\"error_\", $filename))],\n\tmapColumn(\n\t\tInitialSalesOrderNumber = Aggregate1@InitialSalesOrderNumber,\n\t\tCustomerID,\n\t\tApplyDate,\n\t\tOpenDate,\n\t\tCloseDate,\n\t\tLastName,\n\t\tFirstName,\n\t\tLastNameKana,\n\t\tFirstNameKana,\n\t\tBirthday,\n\t\tPostalCode,\n\t\tAddress,\n\t\tTelephoneNumber,\n\t\t{E-mail},\n\t\tSIMPhoneNumber,\n\t\tShopID,\n\t\tSalesChannel,\n\t\tShopName,\n\t\tShopZipCode,\n\t\tShopAddress,\n\t\tShopTelephoneNumber,\n\t\tDisconnectionReason,\n\t\tError,\n\t\tErrorcode\n\t),\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> sink1\nValid sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:[($filename)],\n\tmapColumn(\n\t\tcustomer,\n\t\tstatus,\n\t\tlocatorProperties,\n\t\towner,\n\t\torigin\n\t),\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> processedToJson"
+				}
+			},
+			"dependsOn": []
+		}
+	]
+}

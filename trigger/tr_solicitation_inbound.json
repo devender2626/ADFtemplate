@@ -1,0 +1,27 @@
+{
+	"name": "tr_solicitation_inbound",
+	"properties": {
+		"annotations": [],
+		"runtimeState": "Started",
+		"pipelines": [
+			{
+				"pipelineReference": {
+					"referenceName": "pl_solicit_inbound_file_load",
+					"type": "PipelineReference"
+				},
+				"parameters": {
+					"fileName": "@triggerBody().fileName"
+				}
+			}
+		],
+		"type": "BlobEventsTrigger",
+		"typeProperties": {
+			"blobPathBeginsWith": "/inbound/blobs/",
+			"ignoreEmptyBlobs": true,
+			"scope": "/subscriptions/19d8d1ac-3f00-4c5a-a1b6-6f65a774c7c2/resourceGroups/rgelitapoc/providers/Microsoft.Storage/storageAccounts/sasolicitationsintg",
+			"events": [
+				"Microsoft.Storage.BlobCreated"
+			]
+		}
+	}
+}

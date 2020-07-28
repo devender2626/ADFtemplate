@@ -1,0 +1,1038 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "SolicitEventDF"
+		},
+		"CosmosDbSqlApiCollection_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'CosmosDbSqlApiCollection'"
+		},
+		"LinkCosmosDB_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'LinkCosmosDB'"
+		},
+		"LinkSolicit_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'LinkSolicit'"
+		},
+		"Source_Blob_Link_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'Source_Blob_Link'"
+		},
+		"ls_Blob_json_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'ls_Blob_json'"
+		},
+		"tr_IngestSolicitation_properties_typeProperties_scope": {
+			"type": "string",
+			"defaultValue": "/subscriptions/19d8d1ac-3f00-4c5a-a1b6-6f65a774c7c2/resourceGroups/RGElitaPOC/providers/Microsoft.Storage/storageAccounts/soliciteventsa"
+		},
+		"trigger1_properties_typeProperties_scope": {
+			"type": "string",
+			"defaultValue": "/subscriptions/19d8d1ac-3f00-4c5a-a1b6-6f65a774c7c2/resourceGroups/RGElitaPOC/providers/Microsoft.Storage/storageAccounts/soliciteventsa"
+		},
+		"trigger2_properties_typeProperties_scope": {
+			"type": "string",
+			"defaultValue": "/subscriptions/19d8d1ac-3f00-4c5a-a1b6-6f65a774c7c2/resourceGroups/RGElitaPOC/providers/Microsoft.Storage/storageAccounts/soliciteventsa"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/CosmosDbSqlApiCollection')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "CosmosDb",
+				"typeProperties": {
+					"connectionString": "[parameters('CosmosDbSqlApiCollection_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/LinkCosmosDB')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "CosmosDb",
+				"typeProperties": {
+					"connectionString": "[parameters('LinkCosmosDB_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/LinkSolicit')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobStorage",
+				"typeProperties": {
+					"connectionString": "[parameters('LinkSolicit_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Source_Blob_Link')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobStorage",
+				"typeProperties": {
+					"connectionString": "[parameters('Source_Blob_Link_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ls_Blob_json')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobStorage",
+				"typeProperties": {
+					"connectionString": "[parameters('ls_Blob_json_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/tr_IngestSolicitation')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Stopped",
+				"pipelines": [],
+				"type": "BlobEventsTrigger",
+				"typeProperties": {
+					"blobPathBeginsWith": "/fileingest/blobs/",
+					"ignoreEmptyBlobs": true,
+					"scope": "[parameters('tr_IngestSolicitation_properties_typeProperties_scope')]",
+					"events": [
+						"Microsoft.Storage.BlobCreated"
+					]
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/trigger1')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Stopped",
+				"pipelines": [],
+				"type": "BlobEventsTrigger",
+				"typeProperties": {
+					"blobPathBeginsWith": "/soliciteventcontainer/blobs/",
+					"ignoreEmptyBlobs": true,
+					"scope": "[parameters('trigger1_properties_typeProperties_scope')]",
+					"events": [
+						"Microsoft.Storage.BlobCreated"
+					]
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/trigger2')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Stopped",
+				"pipelines": [],
+				"type": "BlobEventsTrigger",
+				"typeProperties": {
+					"blobPathBeginsWith": "/sa-fileingress-dev/blobs/",
+					"ignoreEmptyBlobs": true,
+					"scope": "[parameters('trigger2_properties_typeProperties_scope')]",
+					"events": [
+						"Microsoft.Storage.BlobCreated"
+					]
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/CosmosDbSqlApiCollection')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "CosmosDbSqlApiCollection",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "CosmosDbSqlApiCollection",
+				"schema": {},
+				"typeProperties": {
+					"collectionName": "SolicitationEvent"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/CosmosDbSqlApiCollection')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DelimitedText2')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "Source_Blob_Link",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"folderPath": "Archive",
+						"container": "soliciteventinprogcontainer"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/Source_Blob_Link')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/InProcess_Blob')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "Source_Blob_Link",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"container": "soliciteventinprogcontainer"
+					},
+					"columnDelimiter": "|",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "InitialSalesOrderNumber",
+						"type": "String"
+					},
+					{
+						"name": "CustomerID",
+						"type": "String"
+					},
+					{
+						"name": "ApplyDate",
+						"type": "String"
+					},
+					{
+						"name": "OpenDate",
+						"type": "String"
+					},
+					{
+						"name": "CloseDate",
+						"type": "String"
+					},
+					{
+						"name": "LastName",
+						"type": "String"
+					},
+					{
+						"name": "FirstName",
+						"type": "String"
+					},
+					{
+						"name": "LastNameKana",
+						"type": "String"
+					},
+					{
+						"name": "FirstNameKana",
+						"type": "String"
+					},
+					{
+						"name": "Birthday",
+						"type": "String"
+					},
+					{
+						"name": "PostalCode",
+						"type": "String"
+					},
+					{
+						"name": "Address",
+						"type": "String"
+					},
+					{
+						"name": "TelephoneNumber",
+						"type": "String"
+					},
+					{
+						"name": "E-mail",
+						"type": "String"
+					},
+					{
+						"name": "SIMPhoneNumber",
+						"type": "String"
+					},
+					{
+						"name": "ShopID",
+						"type": "String"
+					},
+					{
+						"name": "SalesChannel",
+						"type": "String"
+					},
+					{
+						"name": "ShopName",
+						"type": "String"
+					},
+					{
+						"name": "ShopZipCode",
+						"type": "String"
+					},
+					{
+						"name": "ShopAddress",
+						"type": "String"
+					},
+					{
+						"name": "ShopTelephoneNumber",
+						"type": "String"
+					},
+					{
+						"name": "DisconnectionReason",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/Source_Blob_Link')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/InProcess_Blob_DF_Parm')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "Source_Blob_Link",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"container": "sa-fileingress-dev"
+					},
+					"columnDelimiter": "|",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/Source_Blob_Link')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/InProcess_Blob_Param')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "Source_Blob_Link",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"filename": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": {
+							"value": "@dataset().filename",
+							"type": "Expression"
+						},
+						"container": "soliciteventinprogcontainer"
+					},
+					"columnDelimiter": "|",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/Source_Blob_Link')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Reject_Blob')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "Source_Blob_Link",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"YY": {
+						"type": "string"
+					},
+					"MM": {
+						"type": "string"
+					},
+					"DD": {
+						"type": "string"
+					},
+					"Folder": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"folderPath": {
+							"value": "@concat(dataset().Folder,'/',dataset().YY,'/',dataset().MM,'/',dataset().DD)",
+							"type": "Expression"
+						},
+						"container": "soliciteventrejectcontainer"
+					},
+					"columnDelimiter": "|",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/Source_Blob_Link')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Source_Blob')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "Source_Blob_Link",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"container": "sa-fileingress-dev"
+					},
+					"columnDelimiter": "|",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/Source_Blob_Link')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Source_Blob_Param')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "Source_Blob_Link",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"filename": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": {
+							"value": "@dataset().filename",
+							"type": "Expression"
+						},
+						"container": "sa-fileingress-dev"
+					},
+					"columnDelimiter": "|",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/Source_Blob_Link')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ds_Blob_Json')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ls_Blob_json",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"container": "processed"
+					}
+				},
+				"schema": {}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ls_Blob_json')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/dataflow')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "InProcess_Blob_DF_Parm",
+								"type": "DatasetReference"
+							},
+							"name": "GetFileData"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "Reject_Blob",
+								"type": "DatasetReference"
+							},
+							"name": "sink1"
+						},
+						{
+							"dataset": {
+								"referenceName": "CosmosDbSqlApiCollection",
+								"type": "DatasetReference"
+							},
+							"name": "sink2"
+						}
+					],
+					"transformations": [
+						{
+							"name": "Transform"
+						},
+						{
+							"name": "Valid"
+						},
+						{
+							"name": "IsNotValid"
+						},
+						{
+							"name": "Select1"
+						},
+						{
+							"name": "Aggregate1"
+						},
+						{
+							"name": "Join1"
+						}
+					],
+					"script": "parameters{\n\tfilename as string (\"AJP_RSIM_Enrollment_20200403_114123 _demo.txt\"),\n\tYY as string (\"2020\"),\n\tMM as string (\"06\"),\n\tDD as string (\"09\"),\n\tcompanycode as string (\"cpmp\"),\n\tdealercode as string (\"DD\"),\n\tOperation as string (\"Enrollment\")\n}\nsource(output(\n\t\tInitialSalesOrderNumber as long,\n\t\tCustomerID as long,\n\t\tApplyDate as date 'yyyy/MM/dd',\n\t\tOpenDate as date 'yyyy/MM/dd',\n\t\tCloseDate as date 'yyyy/MM/dd',\n\t\tLastName as string,\n\t\tFirstName as string,\n\t\tLastNameKana as string,\n\t\tFirstNameKana as string,\n\t\tBirthday as date 'yyyy/MM/dd',\n\t\tPostalCode as integer,\n\t\tAddress as string,\n\t\tTelephoneNumber as integer,\n\t\t{E-mail} as string,\n\t\tSIMPhoneNumber as string,\n\t\tShopID as string,\n\t\tSalesChannel as string,\n\t\tShopName as string,\n\t\tShopZipCode as string,\n\t\tShopAddress as string,\n\t\tShopTelephoneNumber as string,\n\t\tDisconnectionReason as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tmoveFiles: ['','Archive']) ~> GetFileData\nJoin1 derive(customer = @(id=CustomerID,\n\t\tfirstName=FirstName,\n\t\tlastName=LastName,\n\t\tfirstNameKana=FirstNameKana,\n\t\tlastNameKana=LastNameKana,\n\t\tdateOfBirth=Birthday,\n\t\tworkPhoneNumber=ShopTelephoneNumber,\n\t\thomePhoneNumber=TelephoneNumber,\n\t\tcellPhoneNumber=\"\",\n\t\temailAddress={E-mail},\n\t\tApplyDate=ApplyDate,\n\t\tAddress=@(address1=Address,\n\t\taddress2=\"\",\n\t\taddress3=\"\",\n\t\tregionCode=\"\",\n\t\tcity=\"\",\n\t\tzipCode=PostalCode,\n\t\tcountryCode=\"\")),\n\t\tstatus = \"Active\",\n\t\tlocatorProperties = @(dateOfBirth=Birthday,\n\t\tcustomerId=CustomerID),\n\t\towner = @(organization=@(code=\"\",\n\t\tname=\"\",\n\t\taddress=\"\",\n\t\tworkPhoneNumber=\"\")),\n\t\torigin = @(organization=\"\",\n\t\tchannelCode=\"\",\n\t\tsalesOrderNumber=\"\"),\n\t\tIsValidInsert = iif( SalesNumberCount > 1||\r\n     isNull(Select1@InitialSalesOrderNumber)||\r\n     isNull(CustomerID)||     \r\n     isNull(LastName)||\r\n     isNull(FirstName)||\r\n     isNull(LastNameKana) ||\r\n     isNull(FirstNameKana)||\r\n     isNull(PostalCode)||\r\n     isNull(Address)||\r\n     isNull(TelephoneNumber)||\r\n     isNull({E-mail})||\r\n     isNull(SIMPhoneNumber)     \r\n, 0, 1),\n\t\tIsValidUpdate = iif( SalesNumberCount > 1||\r\n     isNull(Select1@InitialSalesOrderNumber)||\r\n     isNull(CustomerID)||\r\n     isNull(ApplyDate)||\r\n     isNull(OpenDate)||\r\n     isNull(LastName)||\r\n     isNull(FirstName)||\r\n     isNull(LastNameKana) ||\r\n      isNull(FirstNameKana)||\r\n     isNull(Birthday)||\r\n     isNull(PostalCode)||\r\n     isNull(Address)||\r\n     isNull(TelephoneNumber)||\r\n     isNull({E-mail})||\r\n     isNull(SIMPhoneNumber)     \r\n, 0, 1),\n\t\tIsValidDelete = iif( SalesNumberCount > 1||\r\n     isNull(Select1@InitialSalesOrderNumber)||\r\n     isNull(CustomerID)||\r\n     isNull(ApplyDate)||\r\n     isNull(OpenDate)||\r\n     isNull(LastName)||\r\n     isNull(FirstName)||\r\n     isNull(LastNameKana) ||\r\n      isNull(FirstNameKana)||\r\n     isNull(Birthday)||\r\n     isNull(PostalCode)||\r\n     isNull(Address)||\r\n     isNull(TelephoneNumber)||\r\n     isNull({E-mail})||\r\n     isNull(SIMPhoneNumber)     \r\n, 0, 1),\n\t\tError = iif((upper($Operation)==\"ENROLLMENT\" || upper($Operation)==\"CANCEL\"||upper($Operation)==\"UPDATE\") && SalesNumberCount> 1 ,\"Duplicate record!\", \r\niif((upper($Operation)==\"ENROLLMENT\" || upper($Operation)==\"CANCEL\"||upper($Operation)==\"UPDATE\") && (isNull(Aggregate1@InitialSalesOrderNumber)),\"Invalid initial sales order number\",\r\niif((upper($Operation)==\"ENROLLMENT\" || upper($Operation)==\"CANCEL\"||upper($Operation)==\"UPDATE\" ) && isNull(CustomerID),\"Invalid customerid\",\r\niif((upper($Operation)==\"ENROLLMENT\") && isNull(ApplyDate) ,\"Invalid applydate record!\",\r\niif((upper($Operation)==\"ENROLLMENT\") && isNull(OpenDate) ,\"Invalid open record!\",\r\niif((upper($Operation)==\"ENROLLMENT\" || upper($Operation)==\"UPDATE\" ) && (isNull(FirstName) || length(FirstName) >60) ,\"Invalid firstName\", \r\niif((upper($Operation)==\"ENROLLMENT\" || upper($Operation)==\"UPDATE\" ) && (isNull(LastName)|| length(LastName) >30),\"Invalid firstName\",\r\niif((upper($Operation)==\"ENROLLMENT\" || upper($Operation)==\"UPDATE\" ) && isNull(FirstNameKana) || length(FirstName) >60,\"Invalid firstNameKana\",\r\niif((upper($Operation)==\"ENROLLMENT\" || upper($Operation)==\"UPDATE\" ) && isNull(LastNameKana) || length(LastNameKana) >60,\"Invalid firstNameKana\", \r\niif((upper($Operation)==\"ENROLLMENT\" ) && isNull(Birthday) ,\"Invalid Birthdate\", \"\"))) ))))))),\n\t\tErrorcode = 1) ~> Transform\nTransform filter((IsValidInsert== 1 && upper($Operation) ==\"ENROLLMENT\") || (IsValidDelete == 1 && $Operation ==\"UPDATE\") || (IsValidUpdate== 1 && upper($Operation) ==\"CANCEL\")) ~> Valid\nTransform filter((IsValidInsert== 0 && upper($Operation) ==\"ENROLLMENT\") || (IsValidDelete == 0 && $Operation ==\"UPDATE\") || (IsValidUpdate== 0 && upper($Operation) ==\"CANCEL\")) ~> IsNotValid\nGetFileData select(mapColumn(\n\t\tInitialSalesOrderNumber,\n\t\tCustomerID,\n\t\tApplyDate,\n\t\tOpenDate,\n\t\tCloseDate,\n\t\tLastName,\n\t\tFirstName,\n\t\tLastNameKana,\n\t\tFirstNameKana,\n\t\tBirthday,\n\t\tPostalCode,\n\t\tAddress,\n\t\tTelephoneNumber,\n\t\t{E-mail},\n\t\tSIMPhoneNumber,\n\t\tShopID,\n\t\tSalesChannel,\n\t\tShopName,\n\t\tShopZipCode,\n\t\tShopAddress,\n\t\tShopTelephoneNumber,\n\t\tDisconnectionReason\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Select1\nGetFileData aggregate(groupBy(InitialSalesOrderNumber),\n\tSalesNumberCount = count(1)) ~> Aggregate1\nAggregate1, Select1 join(Aggregate1@InitialSalesOrderNumber == Select1@InitialSalesOrderNumber,\n\tjoinType:'inner',\n\tbroadcast: 'auto')~> Join1\nIsNotValid sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:[(concat(\"error_\", $filename))],\n\tmapColumn(\n\t\tInitialSalesOrderNumber = Aggregate1@InitialSalesOrderNumber,\n\t\tSalesNumberCount,\n\t\tInitialSalesOrderNumber = Select1@InitialSalesOrderNumber,\n\t\tCustomerID,\n\t\tApplyDate,\n\t\tOpenDate,\n\t\tCloseDate,\n\t\tLastName,\n\t\tFirstName,\n\t\tLastNameKana,\n\t\tFirstNameKana,\n\t\tBirthday,\n\t\tPostalCode,\n\t\tAddress,\n\t\tTelephoneNumber,\n\t\t{E-mail},\n\t\tSIMPhoneNumber,\n\t\tShopID,\n\t\tSalesChannel,\n\t\tShopName,\n\t\tShopZipCode,\n\t\tShopAddress,\n\t\tShopTelephoneNumber,\n\t\tDisconnectionReason,\n\t\tIsValidInsert,\n\t\tIsValidUpdate,\n\t\tIsValidDelete,\n\t\tError,\n\t\tErrorcode\n\t),\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> sink1\nValid sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'document',\n\tmapColumn(\n\t\tcustomer,\n\t\tstatus,\n\t\tlocatorProperties,\n\t\towner,\n\t\torigin\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> sink2"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/InProcess_Blob_DF_Parm')]",
+				"[concat(variables('factoryId'), '/datasets/Reject_Blob')]",
+				"[concat(variables('factoryId'), '/datasets/CosmosDbSqlApiCollection')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/df_SolicitationDataProcess')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "InProcess_Blob_DF_Parm",
+								"type": "DatasetReference"
+							},
+							"name": "GetFileData"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "Reject_Blob",
+								"type": "DatasetReference"
+							},
+							"name": "sink1"
+						},
+						{
+							"dataset": {
+								"referenceName": "ds_Blob_Json",
+								"type": "DatasetReference"
+							},
+							"name": "processedToJson"
+						}
+					],
+					"transformations": [
+						{
+							"name": "Transform"
+						},
+						{
+							"name": "Valid"
+						},
+						{
+							"name": "IsNotValid"
+						},
+						{
+							"name": "Select1"
+						},
+						{
+							"name": "Aggregate1"
+						},
+						{
+							"name": "Join1"
+						}
+					],
+					"script": "parameters{\n\tfilename as string,\n\tYY as string (\"2020\"),\n\tMM as string (\"06\"),\n\tDD as string (\"09\"),\n\tcompanycode as string (\"cpmp\"),\n\tdealercode as string (\"DD\"),\n\tOperation as string (\"Enrollment\")\n}\nsource(output(\n\t\tInitialSalesOrderNumber as string,\n\t\tCustomerID as long,\n\t\tApplyDate as date 'yyyy/MM/dd',\n\t\tOpenDate as date 'yyyy/MM/dd',\n\t\tCloseDate as date 'yyyy/MM/dd',\n\t\tLastName as string,\n\t\tFirstName as string,\n\t\tLastNameKana as string,\n\t\tFirstNameKana as string,\n\t\tBirthday as date 'yyyy/MM/dd',\n\t\tPostalCode as integer,\n\t\tAddress as string,\n\t\tTelephoneNumber as integer,\n\t\t{E-mail} as string,\n\t\tSIMPhoneNumber as string,\n\t\tShopID as string,\n\t\tSalesChannel as string,\n\t\tShopName as string,\n\t\tShopZipCode as string,\n\t\tShopAddress as string,\n\t\tShopTelephoneNumber as string,\n\t\tDisconnectionReason as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false) ~> GetFileData\nJoin1 derive(customer = @(id=CustomerID,\n\t\tfirstName=FirstName,\n\t\tlastName=LastName,\n\t\tfirstNameKana=FirstNameKana,\n\t\tlastNameKana=LastNameKana,\n\t\tdateOfBirth=Birthday,\n\t\tworkPhoneNumber=ShopTelephoneNumber,\n\t\thomePhoneNumber=TelephoneNumber,\n\t\tcellPhoneNumber=\"\",\n\t\temailAddress={E-mail},\n\t\tApplyDate=ApplyDate,\n\t\tAddress=@(address1=Address,\n\t\taddress2=\"\",\n\t\taddress3=\"\",\n\t\tregionCode=\"\",\n\t\tcity=\"\",\n\t\tzipCode=PostalCode,\n\t\tcountryCode=\"\")),\n\t\tstatus = \"Active\",\n\t\tlocatorProperties = @(dateOfBirth=Birthday,\n\t\tcustomerId=CustomerID,\n\t\tsalesOrderNumber=Select1@InitialSalesOrderNumber),\n\t\towner = @(organization=@(code=\"\",\n\t\tname=\"\",\n\t\taddress=\"\",\n\t\tworkPhoneNumber=\"\")),\n\t\torigin = @(organization=\"\",\n\t\tchannelCode=\"\",\n\t\tsalesOrderNumber=Select1@InitialSalesOrderNumber),\n\t\tIsValidInsert = iif( SalesNumberCount > 1||\r\n     isNull(Select1@InitialSalesOrderNumber)||\r\n     isNull(CustomerID)||     \r\n     isNull(LastName)||\r\n     isNull(FirstName)||\r\n     isNull(LastNameKana) ||\r\n     isNull(FirstNameKana)||\r\n     isNull(PostalCode)||\r\n     isNull(Address)||\r\n     isNull(TelephoneNumber)||\r\n     isNull({E-mail})||\r\n     isNull(SIMPhoneNumber)     \r\n, 0, 1),\n\t\tIsValidUpdate = iif( SalesNumberCount > 1||\r\n     isNull(Select1@InitialSalesOrderNumber)||\r\n     isNull(CustomerID)||\r\n     isNull(ApplyDate)||\r\n     isNull(OpenDate)||\r\n     isNull(LastName)||\r\n     isNull(FirstName)||\r\n     isNull(LastNameKana) ||\r\n      isNull(FirstNameKana)||\r\n     isNull(Birthday)||\r\n     isNull(PostalCode)||\r\n     isNull(Address)||\r\n     isNull(TelephoneNumber)||\r\n     isNull({E-mail})||\r\n     isNull(SIMPhoneNumber)     \r\n, 0, 1),\n\t\tIsValidDelete = iif( SalesNumberCount > 1||\r\n     isNull(Select1@InitialSalesOrderNumber)||\r\n     isNull(CustomerID)||\r\n     isNull(ApplyDate)||\r\n     isNull(OpenDate)||\r\n     isNull(LastName)||\r\n     isNull(FirstName)||\r\n     isNull(LastNameKana) ||\r\n      isNull(FirstNameKana)||\r\n     isNull(Birthday)||\r\n     isNull(PostalCode)||\r\n     isNull(Address)||\r\n     isNull(TelephoneNumber)||\r\n     isNull({E-mail})||\r\n     isNull(SIMPhoneNumber)     \r\n, 0, 1),\n\t\tError = iif((upper($Operation)==\"ENROLLMENT\" || upper($Operation)==\"CANCEL\"||upper($Operation)==\"UPDATE\") && SalesNumberCount> 1 ,\"Duplicate record!\", \r\niif((upper($Operation)==\"ENROLLMENT\" || upper($Operation)==\"CANCEL\"||upper($Operation)==\"UPDATE\") && (isNull(Aggregate1@InitialSalesOrderNumber)),\"Invalid initial sales order number\",\r\niif((upper($Operation)==\"ENROLLMENT\" || upper($Operation)==\"CANCEL\"||upper($Operation)==\"UPDATE\" ) && isNull(CustomerID),\"Invalid customerid\",\r\niif((upper($Operation)==\"ENROLLMENT\") && isNull(ApplyDate) ,\"Invalid applydate record!\",\r\niif((upper($Operation)==\"ENROLLMENT\") && isNull(OpenDate) ,\"Invalid open record!\",\r\niif((upper($Operation)==\"CANCEL\" ) && isNull(CloseDate) ,\"Invalid close date\", \r\niif((upper($Operation)==\"ENROLLMENT\" || upper($Operation)==\"UPDATE\" ) && (isNull(FirstName) || length(FirstName) >60) ,\"Invalid firstname\", \r\niif((upper($Operation)==\"ENROLLMENT\" || upper($Operation)==\"UPDATE\" ) && (isNull(LastName)|| length(LastName) >30),\"Invalid lastname\",\r\niif((upper($Operation)==\"ENROLLMENT\" || upper($Operation)==\"UPDATE\" ) && (isNull(FirstNameKana) || length(FirstNameKana) >60),\"Invalid firstnameKana\",\r\niif((upper($Operation)==\"ENROLLMENT\" || upper($Operation)==\"UPDATE\" ) && (isNull(LastNameKana) || length(LastNameKana) >60),\"Invalid firstnameKana\", \r\niif((upper($Operation)==\"ENROLLMENT\" ) && isNull(Birthday) ,\"Invalid Birthdate\", \r\niif((upper($Operation)==\"ENROLLMENT\" || upper($Operation)==\"UPDATE\" ) && isNull(PostalCode),\"Invalid postal code\",\r\niif((upper($Operation)==\"ENROLLMENT\" || upper($Operation)==\"UPDATE\" ) && isNull(Address),\"Invalid address\",\r\niif((upper($Operation)==\"ENROLLMENT\" || upper($Operation)==\"UPDATE\" ) && isNull(TelephoneNumber),\"Invalid telephone number\",\r\niif((upper($Operation)==\"ENROLLMENT\" || upper($Operation)==\"UPDATE\" ) && isNull({E-mail}),\"Invalid email address\",\r\niif((upper($Operation)==\"ENROLLMENT\" || upper($Operation)==\"CANCEL\"||upper($Operation)==\"UPDATE\" ) && isNull(SIMPhoneNumber),\"Invalid SIM phone number\",\"\"))))))) ))))))))),\n\t\tErrorcode = iif((upper($Operation)==\"ENROLLMENT\" || upper($Operation)==\"CANCEL\"||upper($Operation)==\"UPDATE\") && SalesNumberCount> 1 ,\"000\", \r\niif((upper($Operation)==\"ENROLLMENT\" || upper($Operation)==\"CANCEL\"||upper($Operation)==\"UPDATE\") && (isNull(Aggregate1@InitialSalesOrderNumber)),\"001\",\r\niif((upper($Operation)==\"ENROLLMENT\" || upper($Operation)==\"CANCEL\"||upper($Operation)==\"UPDATE\" ) && isNull(CustomerID),\"002\",\r\niif((upper($Operation)==\"ENROLLMENT\") && isNull(ApplyDate) ,\"003\",\r\niif((upper($Operation)==\"ENROLLMENT\") && isNull(OpenDate) ,\"004\",\r\niif((upper($Operation)==\"CANCEL\") && isNull(CloseDate) ,\"005\",\r\niif((upper($Operation)==\"ENROLLMENT\" || upper($Operation)==\"UPDATE\" ) && (isNull(FirstName) || length(FirstName) >60) ,\"006\", \r\niif((upper($Operation)==\"ENROLLMENT\" || upper($Operation)==\"UPDATE\" ) && (isNull(LastName)|| length(LastName) >30),\"007\",\r\niif((upper($Operation)==\"ENROLLMENT\" || upper($Operation)==\"UPDATE\" ) && (isNull(FirstNameKana) || length(FirstName) >60),\"008\",\r\niif((upper($Operation)==\"ENROLLMENT\" || upper($Operation)==\"UPDATE\" ) && (isNull(LastNameKana) || length(LastNameKana) >60),\"009\", \r\niif((upper($Operation)==\"ENROLLMENT\" || upper($Operation)==\"UPDATE\" ) && isNull(PostalCode),\"010\",\r\niif((upper($Operation)==\"ENROLLMENT\" || upper($Operation)==\"UPDATE\" ) && isNull(Address),\"011\",\r\niif((upper($Operation)==\"ENROLLMENT\" || upper($Operation)==\"UPDATE\" ) && isNull(TelephoneNumber),\"012\",\r\niif((upper($Operation)==\"ENROLLMENT\" || upper($Operation)==\"UPDATE\" ) && isNull({E-mail}),\"013\",\r\niif((upper($Operation)==\"ENROLLMENT\" || upper($Operation)==\"CANCEL\"||upper($Operation)==\"UPDATE\" ) && isNull(SIMPhoneNumber),\"014\",\"\"))))))) ))))))))) ~> Transform\nTransform filter((IsValidInsert== 1 && upper($Operation) ==\"ENROLLMENT\") || (IsValidUpdate == 1 && $Operation ==\"UPDATE\") || (IsValidDelete== 1 && upper($Operation) ==\"CANCEL\")) ~> Valid\nTransform filter((IsValidInsert== 0 && upper($Operation) ==\"ENROLLMENT\") || (IsValidUpdate == 0 && $Operation ==\"UPDATE\") || (IsValidDelete== 0 && upper($Operation) ==\"CANCEL\")) ~> IsNotValid\nGetFileData select(mapColumn(\n\t\tInitialSalesOrderNumber,\n\t\tCustomerID,\n\t\tApplyDate,\n\t\tOpenDate,\n\t\tCloseDate,\n\t\tLastName,\n\t\tFirstName,\n\t\tLastNameKana,\n\t\tFirstNameKana,\n\t\tBirthday,\n\t\tPostalCode,\n\t\tAddress,\n\t\tTelephoneNumber,\n\t\t{E-mail},\n\t\tSIMPhoneNumber,\n\t\tShopID,\n\t\tSalesChannel,\n\t\tShopName,\n\t\tShopZipCode,\n\t\tShopAddress,\n\t\tShopTelephoneNumber,\n\t\tDisconnectionReason\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Select1\nGetFileData aggregate(groupBy(InitialSalesOrderNumber),\n\tSalesNumberCount = count(1)) ~> Aggregate1\nAggregate1, Select1 join(Aggregate1@InitialSalesOrderNumber == Select1@InitialSalesOrderNumber,\n\tjoinType:'inner',\n\tbroadcast: 'auto')~> Join1\nIsNotValid sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:[(concat(\"error_\", $filename))],\n\tmapColumn(\n\t\tInitialSalesOrderNumber = Aggregate1@InitialSalesOrderNumber,\n\t\tCustomerID,\n\t\tApplyDate,\n\t\tOpenDate,\n\t\tCloseDate,\n\t\tLastName,\n\t\tFirstName,\n\t\tLastNameKana,\n\t\tFirstNameKana,\n\t\tBirthday,\n\t\tPostalCode,\n\t\tAddress,\n\t\tTelephoneNumber,\n\t\t{E-mail},\n\t\tSIMPhoneNumber,\n\t\tShopID,\n\t\tSalesChannel,\n\t\tShopName,\n\t\tShopZipCode,\n\t\tShopAddress,\n\t\tShopTelephoneNumber,\n\t\tDisconnectionReason,\n\t\tError,\n\t\tErrorcode\n\t),\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> sink1\nValid sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:[($filename)],\n\tmapColumn(\n\t\tcustomer,\n\t\tstatus,\n\t\tlocatorProperties,\n\t\towner,\n\t\torigin\n\t),\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> processedToJson"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/InProcess_Blob_DF_Parm')]",
+				"[concat(variables('factoryId'), '/datasets/Reject_Blob')]",
+				"[concat(variables('factoryId'), '/datasets/ds_Blob_Json')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Pl_IngestSolicitationFile')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Get_Files_From_Blob",
+						"type": "GetMetadata",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataset": {
+								"referenceName": "Source_Blob",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"fieldList": [
+								"childItems"
+							],
+							"storeSettings": {
+								"type": "AzureBlobStorageReadSettings",
+								"recursive": true
+							},
+							"formatSettings": {
+								"type": "DelimitedTextReadSettings"
+							}
+						}
+					},
+					{
+						"name": "ForEach1",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "Get_Files_From_Blob",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('Get_Files_From_Blob').output.childItems",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "If Condition1",
+									"type": "IfCondition",
+									"dependsOn": [
+										{
+											"activity": "GetFileStructure",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"userProperties": [
+										{
+											"name": "filename",
+											"value": "@item().name"
+										}
+									],
+									"typeProperties": {
+										"expression": {
+											"value": "@and(endswith(item().name,'txt'),\nand(contains(string(activity('GetFileStructure').output.structure),'LastName'),\ncontains(string(activity('GetFileStructure').output.structure),'FirstName')))",
+											"type": "Expression"
+										},
+										"ifFalseActivities": [
+											{
+												"name": "MoveToReject_Blob",
+												"type": "Copy",
+												"dependsOn": [],
+												"policy": {
+													"timeout": "7.00:00:00",
+													"retry": 0,
+													"retryIntervalInSeconds": 30,
+													"secureOutput": false,
+													"secureInput": false
+												},
+												"userProperties": [],
+												"typeProperties": {
+													"source": {
+														"type": "DelimitedTextSource",
+														"storeSettings": {
+															"type": "AzureBlobStorageReadSettings",
+															"recursive": true
+														},
+														"formatSettings": {
+															"type": "DelimitedTextReadSettings"
+														}
+													},
+													"sink": {
+														"type": "DelimitedTextSink",
+														"storeSettings": {
+															"type": "AzureBlobStorageWriteSettings"
+														},
+														"formatSettings": {
+															"type": "DelimitedTextWriteSettings",
+															"quoteAllText": true,
+															"fileExtension": ""
+														}
+													},
+													"enableStaging": false
+												},
+												"inputs": [
+													{
+														"referenceName": "Source_Blob_Param",
+														"type": "DatasetReference",
+														"parameters": {
+															"filename": {
+																"value": "@item().name",
+																"type": "Expression"
+															}
+														}
+													}
+												],
+												"outputs": [
+													{
+														"referenceName": "Reject_Blob",
+														"type": "DatasetReference",
+														"parameters": {
+															"YY": {
+																"value": "@substring(split(item().name, '_')[3],0,4)",
+																"type": "Expression"
+															},
+															"MM": {
+																"value": "@substring(split(item().name, '_')[3],4,2)",
+																"type": "Expression"
+															},
+															"DD": {
+																"value": "@substring(split(item().name, '_')[3],6,2)",
+																"type": "Expression"
+															},
+															"Folder": {
+																"value": "@pipeline().parameters.RejectedFolder",
+																"type": "Expression"
+															}
+														}
+													}
+												]
+											}
+										],
+										"ifTrueActivities": [
+											{
+												"name": "dataflow",
+												"type": "ExecuteDataFlow",
+												"dependsOn": [
+													{
+														"activity": "MoveFileSourceToInProcess",
+														"dependencyConditions": [
+															"Succeeded"
+														]
+													}
+												],
+												"policy": {
+													"timeout": "7.00:00:00",
+													"retry": 0,
+													"retryIntervalInSeconds": 30,
+													"secureOutput": false,
+													"secureInput": false
+												},
+												"userProperties": [],
+												"typeProperties": {
+													"dataflow": {
+														"referenceName": "df_SolicitationDataProcess",
+														"type": "DataFlowReference",
+														"parameters": {
+															"filename": {
+																"value": "'@{concat(replace(item().name,'.txt',''), '_', formatDateTime(utcnow(),'yyyy_MM_dd_HHssmm'), '.txt')}'",
+																"type": "Expression"
+															},
+															"YY": "\"2020\"",
+															"MM": "\"06\"",
+															"DD": "\"09\"",
+															"companycode": "\"cpmp\"",
+															"dealercode": "\"DD\"",
+															"Operation": "\"Enrollment\""
+														},
+														"datasetParameters": {
+															"GetFileData": {},
+															"sink1": {
+																"YY": {
+																	"value": "@substring(split(item().name, '_')[3],0,4)",
+																	"type": "Expression"
+																},
+																"MM": {
+																	"value": "@substring(split(item().name, '_')[3],4,2)",
+																	"type": "Expression"
+																},
+																"DD": {
+																	"value": "@substring(split(item().name, '_')[3],6,2)",
+																	"type": "Expression"
+																},
+																"Folder": {
+																	"value": "@pipeline().parameters.ErrorFolder",
+																	"type": "Expression"
+																}
+															},
+															"processedToJson": {}
+														}
+													},
+													"staging": {},
+													"compute": {
+														"coreCount": 8,
+														"computeType": "General"
+													}
+												}
+											},
+											{
+												"name": "MoveFileSourceToInProcess",
+												"type": "Copy",
+												"dependsOn": [],
+												"policy": {
+													"timeout": "7.00:00:00",
+													"retry": 0,
+													"retryIntervalInSeconds": 30,
+													"secureOutput": false,
+													"secureInput": false
+												},
+												"userProperties": [],
+												"typeProperties": {
+													"source": {
+														"type": "DelimitedTextSource",
+														"storeSettings": {
+															"type": "AzureBlobStorageReadSettings",
+															"recursive": true
+														},
+														"formatSettings": {
+															"type": "DelimitedTextReadSettings"
+														}
+													},
+													"sink": {
+														"type": "DelimitedTextSink",
+														"storeSettings": {
+															"type": "AzureBlobStorageWriteSettings"
+														},
+														"formatSettings": {
+															"type": "DelimitedTextWriteSettings",
+															"quoteAllText": true,
+															"fileExtension": ".txt"
+														}
+													},
+													"enableStaging": false
+												},
+												"inputs": [
+													{
+														"referenceName": "Source_Blob_Param",
+														"type": "DatasetReference",
+														"parameters": {
+															"filename": {
+																"value": "@item().name",
+																"type": "Expression"
+															}
+														}
+													}
+												],
+												"outputs": [
+													{
+														"referenceName": "InProcess_Blob",
+														"type": "DatasetReference",
+														"parameters": {}
+													}
+												]
+											}
+										]
+									}
+								},
+								{
+									"name": "GetFileStructure",
+									"type": "GetMetadata",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"dataset": {
+											"referenceName": "Source_Blob_Param",
+											"type": "DatasetReference",
+											"parameters": {
+												"filename": {
+													"value": "@item().name",
+													"type": "Expression"
+												}
+											}
+										},
+										"fieldList": [
+											"structure"
+										],
+										"storeSettings": {
+											"type": "AzureBlobStorageReadSettings",
+											"recursive": true
+										},
+										"formatSettings": {
+											"type": "DelimitedTextReadSettings"
+										}
+									}
+								},
+								{
+									"name": "RemoveFromSource",
+									"type": "Delete",
+									"dependsOn": [
+										{
+											"activity": "If Condition1",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"dataset": {
+											"referenceName": "Source_Blob_Param",
+											"type": "DatasetReference",
+											"parameters": {
+												"filename": "@item().name"
+											}
+										},
+										"enableLogging": false,
+										"storeSettings": {
+											"type": "AzureBlobStorageReadSettings",
+											"recursive": true
+										}
+									}
+								}
+							]
+						}
+					}
+				],
+				"parameters": {
+					"RejectedFolder": {
+						"type": "string",
+						"defaultValue": "Badfile"
+					},
+					"ErrorFolder": {
+						"type": "string",
+						"defaultValue": "Error"
+					}
+				},
+				"variables": {
+					"YY": {
+						"type": "String"
+					},
+					"MM": {
+						"type": "String"
+					},
+					"DD": {
+						"type": "String"
+					},
+					"delaercode": {
+						"type": "String"
+					},
+					"compancode": {
+						"type": "String"
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/Source_Blob')]",
+				"[concat(variables('factoryId'), '/datasets/Source_Blob_Param')]",
+				"[concat(variables('factoryId'), '/datasets/Reject_Blob')]",
+				"[concat(variables('factoryId'), '/dataflows/df_SolicitationDataProcess')]",
+				"[concat(variables('factoryId'), '/datasets/InProcess_Blob')]"
+			]
+		}
+	]
+}

@@ -1,0 +1,42 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "SolicitEventDF"
+		},
+		"CosmosDbSqlApiCollection_connectionString": {
+			"value": ""
+		},
+		"LinkCosmosDB_connectionString": {
+			"value": ""
+		},
+		"LinkSolicit_connectionString": {
+			"value": ""
+		},
+		"Source_Blob_Link_connectionString": {
+			"value": ""
+		},
+		"ls_Blob_json_connectionString": {
+			"value": ""
+		},
+		"tr_IngestSolicitation_properties_typeProperties_scope": {
+			"value": "/subscriptions/19d8d1ac-3f00-4c5a-a1b6-6f65a774c7c2/resourceGroups/RGElitaPOC/providers/Microsoft.Storage/storageAccounts/soliciteventsa"
+		},
+		"tr_sa_fileingress_dev_properties_Pl_IngestSolicitationFile_parameters_RejectedFolder": {
+			"value": "Reject"
+		},
+		"tr_sa_fileingress_dev_properties_Pl_IngestSolicitationFile_parameters_ErrorFolder": {
+			"value": "Error"
+		},
+		"tr_sa_fileingress_dev_properties_typeProperties_scope": {
+			"value": "/subscriptions/19d8d1ac-3f00-4c5a-a1b6-6f65a774c7c2/resourceGroups/RGElitaPOC/providers/Microsoft.Storage/storageAccounts/soliciteventsa"
+		},
+		"trigger1_properties_typeProperties_scope": {
+			"value": "/subscriptions/19d8d1ac-3f00-4c5a-a1b6-6f65a774c7c2/resourceGroups/RGElitaPOC/providers/Microsoft.Storage/storageAccounts/soliciteventsa"
+		},
+		"trigger2_properties_typeProperties_scope": {
+			"value": "/subscriptions/19d8d1ac-3f00-4c5a-a1b6-6f65a774c7c2/resourceGroups/RGElitaPOC/providers/Microsoft.Storage/storageAccounts/soliciteventsa"
+		}
+	}
+}

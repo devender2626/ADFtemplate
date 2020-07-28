@@ -1,0 +1,15 @@
+{
+	"name": "ds_table_solicit_files_info",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_at_solicitfiles",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureTable",
+		"schema": [],
+		"typeProperties": {
+			"tableName": "SolicitFilesInfo"
+		}
+	}
+}

@@ -1,0 +1,59 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "SolicitEventDF"
+		},
+		"tr_sa_fileingress_dev_properties_Pl_IngestSolicitationFile_parameters_RejectedFolder": {
+			"type": "string",
+			"defaultValue": "Reject"
+		},
+		"tr_sa_fileingress_dev_properties_Pl_IngestSolicitationFile_parameters_ErrorFolder": {
+			"type": "string",
+			"defaultValue": "Error"
+		},
+		"tr_sa_fileingress_dev_properties_typeProperties_scope": {
+			"type": "string",
+			"defaultValue": "/subscriptions/19d8d1ac-3f00-4c5a-a1b6-6f65a774c7c2/resourceGroups/RGElitaPOC/providers/Microsoft.Storage/storageAccounts/soliciteventsa"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/tr_sa_fileingress_dev')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "Pl_IngestSolicitationFile",
+							"type": "PipelineReference"
+						},
+						"parameters": {
+							"RejectedFolder": "[parameters('tr_sa_fileingress_dev_properties_Pl_IngestSolicitationFile_parameters_RejectedFolder')]",
+							"ErrorFolder": "[parameters('tr_sa_fileingress_dev_properties_Pl_IngestSolicitationFile_parameters_ErrorFolder')]"
+						}
+					}
+				],
+				"type": "BlobEventsTrigger",
+				"typeProperties": {
+					"blobPathBeginsWith": "/sa-fileingress-dev/blobs/",
+					"ignoreEmptyBlobs": true,
+					"scope": "[parameters('tr_sa_fileingress_dev_properties_typeProperties_scope')]",
+					"events": [
+						"Microsoft.Storage.BlobCreated"
+					]
+				}
+			},
+			"dependsOn": []
+		}
+	]
+}

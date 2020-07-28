@@ -1,0 +1,1313 @@
+{
+	"name": "pl_solicit_inbound_file_load",
+	"properties": {
+		"activities": [
+			{
+				"name": "CheckFileHeaderFormat",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": false,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobStorageWriteSettings"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "InitialSalesOrderNumber",
+									"type": "String"
+								},
+								"sink": {
+									"name": "InitialSalesOrderNumber",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "CustomerID",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CustomerID",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "ApplyDate",
+									"type": "String"
+								},
+								"sink": {
+									"name": "ApplyDate",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "OpenDate",
+									"type": "String"
+								},
+								"sink": {
+									"name": "OpenDate",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "CloseDate",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CloseDate",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "LastName",
+									"type": "String"
+								},
+								"sink": {
+									"name": "LastName",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "FirstName",
+									"type": "String"
+								},
+								"sink": {
+									"name": "FirstName",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "LastNameKana",
+									"type": "String"
+								},
+								"sink": {
+									"name": "LastNameKana",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "FirstNameKana",
+									"type": "String"
+								},
+								"sink": {
+									"name": "FirstNameKana",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Birthday",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Birthday",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "PostalCode",
+									"type": "String"
+								},
+								"sink": {
+									"name": "PostalCode",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Address",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Address",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "TelephoneNumber",
+									"type": "String"
+								},
+								"sink": {
+									"name": "TelephoneNumber",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "E-mail",
+									"type": "String"
+								},
+								"sink": {
+									"name": "E-mail",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "SIMPhoneNumber",
+									"type": "String"
+								},
+								"sink": {
+									"name": "SIMPhoneNumber",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "ShopID",
+									"type": "String"
+								},
+								"sink": {
+									"name": "ShopID",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "SalesChannel",
+									"type": "String"
+								},
+								"sink": {
+									"name": "SalesChannel",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "ShopName",
+									"type": "String"
+								},
+								"sink": {
+									"name": "ShopName",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "ShopZipCode",
+									"type": "String"
+								},
+								"sink": {
+									"name": "ShopZipCode",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "ShopAddress",
+									"type": "String"
+								},
+								"sink": {
+									"name": "ShopAddress",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "ShopTelephoneNumber",
+									"type": "String"
+								},
+								"sink": {
+									"name": "ShopTelephoneNumber",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "DisconnectionReason",
+									"type": "String"
+								},
+								"sink": {
+									"name": "DisconnectionReason",
+									"type": "String"
+								}
+							}
+						]
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "ds_blob_solicit_files",
+						"type": "DatasetReference",
+						"parameters": {
+							"filename": {
+								"value": "@pipeline().parameters.fileName",
+								"type": "Expression"
+							},
+							"container": "inbound"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "ds_blob_solicit_files_archive",
+						"type": "DatasetReference",
+						"parameters": {
+							"filename": {
+								"value": "@pipeline().parameters.fileName",
+								"type": "Expression"
+							},
+							"container": "soliciteventinprogcontainer"
+						}
+					}
+				]
+			},
+			{
+				"name": "CreateBadFileOnFileHeaderFormatError",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "CheckFileHeaderFormat",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": false,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobStorageWriteSettings"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
+						}
+					},
+					"enableStaging": false
+				},
+				"inputs": [
+					{
+						"referenceName": "ds_blob_solicit_files_archive",
+						"type": "DatasetReference",
+						"parameters": {
+							"filename": {
+								"value": "@pipeline().parameters.fileName",
+								"type": "Expression"
+							},
+							"container": "inbound"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "ds_blob_solicit_files_archive",
+						"type": "DatasetReference",
+						"parameters": {
+							"filename": {
+								"value": "@replace(pipeline().parameters.fileName,last(split(pipeline().parameters.fileName,'.')),'bad')",
+								"type": "Expression"
+							},
+							"container": "error"
+						}
+					}
+				]
+			},
+			{
+				"name": "DeleteFromInboundAfterFileHeaderCheck",
+				"type": "Delete",
+				"dependsOn": [
+					{
+						"activity": "CheckFileHeaderFormat",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "ds_blob_solicit_files",
+						"type": "DatasetReference",
+						"parameters": {
+							"filename": {
+								"value": "@pipeline().parameters.fileName",
+								"type": "Expression"
+							},
+							"container": "inbound"
+						}
+					},
+					"enableLogging": false,
+					"storeSettings": {
+						"type": "AzureBlobStorageReadSettings",
+						"recursive": false
+					}
+				}
+			},
+			{
+				"name": "DeleteFromInboundAfterFileHeaderFormat",
+				"type": "Delete",
+				"dependsOn": [
+					{
+						"activity": "CreateBadFileOnFileHeaderFormatError",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "ds_blob_solicit_files",
+						"type": "DatasetReference",
+						"parameters": {
+							"filename": {
+								"value": "@pipeline().parameters.fileName",
+								"type": "Expression"
+							},
+							"container": "inbound"
+						}
+					},
+					"enableLogging": false,
+					"storeSettings": {
+						"type": "AzureBlobStorageReadSettings",
+						"recursive": false
+					}
+				}
+			},
+			{
+				"name": "CheckFileNameFormatAndExistence",
+				"type": "IfCondition",
+				"dependsOn": [
+					{
+						"activity": "CheckFileExistsInAzureTable",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [
+					{
+						"name": "filename",
+						"value": "@item().name"
+					}
+				],
+				"typeProperties": {
+					"expression": {
+						"value": "@and(equals(activity('CheckFileExistsInAzureTable').output.count,0),and(endswith(toUpper(pipeline().parameters.fileName), '.TXT'), and(equals(length(split(pipeline().parameters.fileName, '_')), 5), or(contains(toUpper(pipeline().parameters.fileName), 'ENROLLMENT'), contains(toUpper(pipeline().parameters.fileName), 'UPDATE')))))",
+						"type": "Expression"
+					},
+					"ifFalseActivities": [
+						{
+							"name": "CreateBadFileOnFileNameOrDuplicateFileError",
+							"type": "Copy",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "DelimitedTextSource",
+									"storeSettings": {
+										"type": "AzureBlobStorageReadSettings",
+										"recursive": false,
+										"enablePartitionDiscovery": false
+									},
+									"formatSettings": {
+										"type": "DelimitedTextReadSettings"
+									}
+								},
+								"sink": {
+									"type": "DelimitedTextSink",
+									"storeSettings": {
+										"type": "AzureBlobStorageWriteSettings"
+									},
+									"formatSettings": {
+										"type": "DelimitedTextWriteSettings",
+										"quoteAllText": true,
+										"fileExtension": ".bad"
+									}
+								},
+								"enableStaging": false
+							},
+							"inputs": [
+								{
+									"referenceName": "ds_blob_solicit_files_archive",
+									"type": "DatasetReference",
+									"parameters": {
+										"filename": {
+											"value": "@pipeline().parameters.fileName",
+											"type": "Expression"
+										},
+										"container": "soliciteventinprogcontainer"
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "ds_blob_solicit_files_archive",
+									"type": "DatasetReference",
+									"parameters": {
+										"filename": {
+											"value": "@replace(pipeline().parameters.fileName,last(split(pipeline().parameters.fileName,'.')),'bad')",
+											"type": "Expression"
+										},
+										"container": "error"
+									}
+								}
+							]
+						},
+						{
+							"name": "DeleteInboudFileOnFileNameOrDuplicateFileError",
+							"type": "Delete",
+							"dependsOn": [
+								{
+									"activity": "CreateBadFileOnFileNameOrDuplicateFileError",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"dataset": {
+									"referenceName": "ds_blob_solicit_files",
+									"type": "DatasetReference",
+									"parameters": {
+										"filename": {
+											"value": "@pipeline().parameters.fileName",
+											"type": "Expression"
+										},
+										"container": "soliciteventinprogcontainer"
+									}
+								},
+								"enableLogging": false,
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": false
+								}
+							}
+						}
+					],
+					"ifTrueActivities": [
+						{
+							"name": "DataFlowSolicitFilesProcess",
+							"type": "ExecuteDataFlow",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"dataflow": {
+									"referenceName": "df_solicit_files_process",
+									"type": "DataFlowReference",
+									"parameters": {
+										"filename": {
+											"value": "'@{pipeline().parameters.fileName}'",
+											"type": "Expression"
+										},
+										"companycode": {
+											"value": "'@{toUpper(last(take(split(pipeline().parameters.fileName, '_'), 1)))}'",
+											"type": "Expression"
+										},
+										"dealercode": {
+											"value": "'@{toUpper(last(take(split(pipeline().parameters.fileName, '_'), 2)))}'",
+											"type": "Expression"
+										},
+										"Operation": {
+											"value": "'@{toUpper(last(take(split(pipeline().parameters.fileName, '_'), 3)))}'",
+											"type": "Expression"
+										}
+									},
+									"datasetParameters": {
+										"GetFileData": {
+											"filename": {
+												"value": "@pipeline().parameters.fileName",
+												"type": "Expression"
+											},
+											"container": "soliciteventinprogcontainer"
+										},
+										"ProcessToFileDetails": {
+											"container": "processed"
+										},
+										"ProcessToFileInfo": {
+											"container": "processedfileinfo"
+										}
+									}
+								},
+								"compute": {
+									"coreCount": 8,
+									"computeType": "General"
+								}
+							}
+						},
+						{
+							"name": "CreateArchiveFileAfterDataFlow",
+							"type": "Copy",
+							"dependsOn": [
+								{
+									"activity": "DataFlowSolicitFilesProcess",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "DelimitedTextSource",
+									"storeSettings": {
+										"type": "AzureBlobStorageReadSettings",
+										"recursive": false,
+										"enablePartitionDiscovery": false
+									},
+									"formatSettings": {
+										"type": "DelimitedTextReadSettings"
+									}
+								},
+								"sink": {
+									"type": "DelimitedTextSink",
+									"storeSettings": {
+										"type": "AzureBlobStorageWriteSettings"
+									},
+									"formatSettings": {
+										"type": "DelimitedTextWriteSettings",
+										"quoteAllText": true,
+										"fileExtension": ".txt"
+									}
+								},
+								"enableStaging": false
+							},
+							"inputs": [
+								{
+									"referenceName": "ds_blob_solicit_files_archive",
+									"type": "DatasetReference",
+									"parameters": {
+										"filename": {
+											"value": "@pipeline().parameters.fileName",
+											"type": "Expression"
+										},
+										"container": "soliciteventinprogcontainer"
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "ds_blob_solicit_files_archive",
+									"type": "DatasetReference",
+									"parameters": {
+										"filename": {
+											"value": "@pipeline().parameters.fileName",
+											"type": "Expression"
+										},
+										"container": "archive"
+									}
+								}
+							]
+						},
+						{
+							"name": "DeleteFromInProgressAfterDataFlow",
+							"type": "Delete",
+							"dependsOn": [
+								{
+									"activity": "CreateArchiveFileAfterDataFlow",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"dataset": {
+									"referenceName": "ds_blob_solicit_files",
+									"type": "DatasetReference",
+									"parameters": {
+										"filename": {
+											"value": "@pipeline().parameters.fileName",
+											"type": "Expression"
+										},
+										"container": "soliciteventinprogcontainer"
+									}
+								},
+								"enableLogging": false,
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": false
+								}
+							}
+						},
+						{
+							"name": "CreateBadFileOnDataFlowError",
+							"type": "Copy",
+							"dependsOn": [
+								{
+									"activity": "DataFlowSolicitFilesProcess",
+									"dependencyConditions": [
+										"Failed"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "DelimitedTextSource",
+									"storeSettings": {
+										"type": "AzureBlobStorageReadSettings",
+										"recursive": false,
+										"enablePartitionDiscovery": false
+									},
+									"formatSettings": {
+										"type": "DelimitedTextReadSettings"
+									}
+								},
+								"sink": {
+									"type": "DelimitedTextSink",
+									"storeSettings": {
+										"type": "AzureBlobStorageWriteSettings"
+									},
+									"formatSettings": {
+										"type": "DelimitedTextWriteSettings",
+										"quoteAllText": true,
+										"fileExtension": ".txt"
+									}
+								},
+								"enableStaging": false
+							},
+							"inputs": [
+								{
+									"referenceName": "ds_blob_solicit_files_archive",
+									"type": "DatasetReference",
+									"parameters": {
+										"filename": {
+											"value": "@pipeline().parameters.fileName",
+											"type": "Expression"
+										},
+										"container": "soliciteventinprogcontainer"
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "ds_blob_solicit_files_archive",
+									"type": "DatasetReference",
+									"parameters": {
+										"filename": {
+											"value": "@replace(pipeline().parameters.fileName,last(split(pipeline().parameters.fileName,'.')),'bad')",
+											"type": "Expression"
+										},
+										"container": "error"
+									}
+								}
+							]
+						},
+						{
+							"name": "DeleteFromInProgressDataFlowError",
+							"type": "Delete",
+							"dependsOn": [
+								{
+									"activity": "CreateBadFileOnDataFlowError",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"dataset": {
+									"referenceName": "ds_blob_solicit_files",
+									"type": "DatasetReference",
+									"parameters": {
+										"filename": {
+											"value": "@pipeline().parameters.fileName",
+											"type": "Expression"
+										},
+										"container": "soliciteventinprogcontainer"
+									}
+								},
+								"enableLogging": false,
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": false
+								}
+							}
+						},
+						{
+							"name": "CopyFileDetailRecordsToSolictFilesTable",
+							"type": "Copy",
+							"dependsOn": [
+								{
+									"activity": "DataFlowSolicitFilesProcess",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "DelimitedTextSource",
+									"storeSettings": {
+										"type": "AzureBlobStorageReadSettings",
+										"recursive": false,
+										"wildcardFileName": {
+											"value": "@replace(toUpper(pipeline().parameters.fileName),'.TXT','.csv')",
+											"type": "Expression"
+										},
+										"enablePartitionDiscovery": false
+									},
+									"formatSettings": {
+										"type": "DelimitedTextReadSettings"
+									}
+								},
+								"sink": {
+									"type": "AzureTableSink",
+									"azureTableInsertType": "merge",
+									"azureTablePartitionKeyName": "PartitionKey",
+									"azureTableRowKeyName": "RowKey",
+									"writeBatchSize": 10000
+								},
+								"enableStaging": false,
+								"translator": {
+									"type": "TabularTranslator",
+									"mappings": [
+										{
+											"source": {
+												"name": "PartitionKey",
+												"type": "String"
+											},
+											"sink": {
+												"name": "PartitionKey",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"name": "RowKey",
+												"type": "String"
+											},
+											"sink": {
+												"name": "RowKey",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"name": "Data",
+												"type": "String"
+											},
+											"sink": {
+												"name": "Data",
+												"type": "String"
+											}
+										}
+									]
+								}
+							},
+							"inputs": [
+								{
+									"referenceName": "ds_blob_solicit_files",
+									"type": "DatasetReference",
+									"parameters": {
+										"filename": {
+											"value": "@pipeline().parameters.fileName",
+											"type": "Expression"
+										},
+										"container": "processed"
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "ds_table_solicit_files",
+									"type": "DatasetReference"
+								}
+							]
+						},
+						{
+							"name": "CopyFileInfoRecordToSolictFilesTable",
+							"type": "Copy",
+							"dependsOn": [
+								{
+									"activity": "CopyFileDetailRecordsToSolictFilesTable",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "DelimitedTextSource",
+									"storeSettings": {
+										"type": "AzureBlobStorageReadSettings",
+										"recursive": false,
+										"wildcardFileName": {
+											"value": "@replace(toUpper(pipeline().parameters.fileName),'.TXT','.csv')",
+											"type": "Expression"
+										},
+										"enablePartitionDiscovery": false
+									},
+									"formatSettings": {
+										"type": "DelimitedTextReadSettings"
+									}
+								},
+								"sink": {
+									"type": "AzureTableSink",
+									"azureTableInsertType": "merge",
+									"azureTablePartitionKeyName": "PartitionKey",
+									"azureTableRowKeyName": "RowKey",
+									"writeBatchSize": 10000
+								},
+								"enableStaging": false,
+								"translator": {
+									"type": "TabularTranslator",
+									"mappings": [
+										{
+											"source": {
+												"name": "PartitionKey",
+												"type": "String"
+											},
+											"sink": {
+												"name": "PartitionKey",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"name": "RowKey",
+												"type": "String"
+											},
+											"sink": {
+												"name": "RowKey",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"name": "Data",
+												"type": "String"
+											},
+											"sink": {
+												"name": "Data",
+												"type": "String"
+											}
+										}
+									]
+								}
+							},
+							"inputs": [
+								{
+									"referenceName": "ds_blob_solicit_files",
+									"type": "DatasetReference",
+									"parameters": {
+										"filename": {
+											"value": "@pipeline().parameters.fileName",
+											"type": "Expression"
+										},
+										"container": "processedfileinfo"
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "ds_table_solicit_files",
+									"type": "DatasetReference"
+								}
+							]
+						},
+						{
+							"name": "TriggerQueueFunction",
+							"type": "AzureFunctionActivity",
+							"dependsOn": [
+								{
+									"activity": "CopyFileInfoRecordToSolictFilesInfoTable",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"functionName": {
+									"value": "@concat('QueueFile/',toUpper(pipeline().parameters.fileName))",
+									"type": "Expression"
+								},
+								"method": "POST",
+								"body": {
+									"value": "{\"filename\":\"@{pipeline().parameters.fileName}\"}",
+									"type": "Expression"
+								}
+							},
+							"linkedServiceName": {
+								"referenceName": "ls_azure_function",
+								"type": "LinkedServiceReference"
+							}
+						},
+						{
+							"name": "DeleteFromProcessedFileDetails",
+							"type": "Delete",
+							"dependsOn": [
+								{
+									"activity": "CopyFileDetailRecordsToSolictFilesTable",
+									"dependencyConditions": [
+										"Succeeded",
+										"Failed"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"dataset": {
+									"referenceName": "ds_blob_solicit_files",
+									"type": "DatasetReference",
+									"parameters": {
+										"filename": {
+											"value": "@pipeline().parameters.fileName",
+											"type": "Expression"
+										},
+										"container": "processed"
+									}
+								},
+								"enableLogging": false,
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": false,
+									"wildcardFileName": {
+										"value": "@{replace(toUpper(pipeline().parameters.fileName),'.TXT','.csv')}",
+										"type": "Expression"
+									}
+								}
+							}
+						},
+						{
+							"name": "DeleteFromProcessedFileInfo",
+							"type": "Delete",
+							"dependsOn": [
+								{
+									"activity": "CopyFileInfoRecordToSolictFilesInfoTable",
+									"dependencyConditions": [
+										"Succeeded",
+										"Failed"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"dataset": {
+									"referenceName": "ds_blob_solicit_files",
+									"type": "DatasetReference",
+									"parameters": {
+										"filename": {
+											"value": "@pipeline().parameters.fileName",
+											"type": "Expression"
+										},
+										"container": "processedfileinfo"
+									}
+								},
+								"enableLogging": false,
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": false,
+									"wildcardFileName": {
+										"value": "@{replace(toUpper(pipeline().parameters.fileName),'.TXT','.csv')}",
+										"type": "Expression"
+									}
+								}
+							}
+						},
+						{
+							"name": "CopyFileInfoRecordToSolictFilesInfoTable",
+							"type": "Copy",
+							"dependsOn": [
+								{
+									"activity": "CopyFileInfoRecordToSolictFilesTable",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "DelimitedTextSource",
+									"storeSettings": {
+										"type": "AzureBlobStorageReadSettings",
+										"recursive": false,
+										"wildcardFileName": {
+											"value": "@replace(toUpper(pipeline().parameters.fileName),'.TXT','.csv')",
+											"type": "Expression"
+										},
+										"enablePartitionDiscovery": false
+									},
+									"formatSettings": {
+										"type": "DelimitedTextReadSettings"
+									}
+								},
+								"sink": {
+									"type": "AzureTableSink",
+									"azureTableInsertType": "merge",
+									"azureTablePartitionKeyName": "PartitionKey",
+									"azureTableRowKeyName": "RowKey",
+									"writeBatchSize": 10000
+								},
+								"enableStaging": false,
+								"translator": {
+									"type": "TabularTranslator",
+									"mappings": [
+										{
+											"source": {
+												"name": "PartitionKey",
+												"type": "String"
+											},
+											"sink": {
+												"name": "PartitionKey",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"name": "RowKey",
+												"type": "String"
+											},
+											"sink": {
+												"name": "RowKey",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"name": "Status",
+												"type": "String"
+											},
+											"sink": {
+												"name": "Status"
+											}
+										}
+									]
+								}
+							},
+							"inputs": [
+								{
+									"referenceName": "ds_blob_solicit_files",
+									"type": "DatasetReference",
+									"parameters": {
+										"filename": {
+											"value": "@pipeline().parameters.fileName",
+											"type": "Expression"
+										},
+										"container": "processedfileinfo"
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "ds_table_solicit_files_info",
+									"type": "DatasetReference"
+								}
+							]
+						}
+					]
+				}
+			},
+			{
+				"name": "CheckFileExistsInAzureTable",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "CheckFileHeaderFormat",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureTableSource",
+						"azureTableSourceQuery": {
+							"value": "PartitionKey eq '@{toUpper(pipeline().parameters.fileName)}'",
+							"type": "Expression"
+						},
+						"azureTableSourceIgnoreTableNotFound": false
+					},
+					"dataset": {
+						"referenceName": "ds_table_solicit_files",
+						"type": "DatasetReference"
+					},
+					"firstRowOnly": false
+				}
+			}
+		],
+		"parameters": {
+			"fileName": {
+				"type": "string"
+			}
+		},
+		"variables": {
+			"delaercode": {
+				"type": "String"
+			},
+			"compancode": {
+				"type": "String"
+			}
+		},
+		"annotations": []
+	}
+}
