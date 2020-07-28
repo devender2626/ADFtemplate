@@ -4,7 +4,7 @@
 		"annotations": [],
 		"type": "AzureKeyVault",
 		"typeProperties": {
-			"baseUrl": "https://kv-solicitations-intg.vault.azure.net/"
+			"baseUrl": "https://kvs-solicitations-dev01.vault.azure.net/"
 		}
 	}
 }
