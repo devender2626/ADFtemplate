@@ -2,14 +2,11 @@
 	"name": "ds_table_solicit_files",
 	"properties": {
 		"linkedServiceName": {
-			"referenceName": "ls_at_solicitfiles",
+			"referenceName": "AzureTableStorage1",
 			"type": "LinkedServiceReference"
 		},
 		"annotations": [],
 		"type": "AzureTable",
-		"schema": [],
-		"typeProperties": {
-			"tableName": "SolicitFiles"
-		}
+		"schema": []
 	}
 }
