@@ -2,7 +2,7 @@
 	"name": "ds_blob_solicit_json",
 	"properties": {
 		"linkedServiceName": {
-			"referenceName": "linkedService1",
+			"referenceName": "ls_sa_solicitations",
 			"type": "LinkedServiceReference"
 		},
 		"parameters": {
