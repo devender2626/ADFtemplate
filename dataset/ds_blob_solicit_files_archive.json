@@ -2,7 +2,7 @@
 	"name": "ds_blob_solicit_files_archive",
 	"properties": {
 		"linkedServiceName": {
-			"referenceName": "ls_sa_solicitations",
+			"referenceName": "linkedService1",
 			"type": "LinkedServiceReference"
 		},
 		"parameters": {
